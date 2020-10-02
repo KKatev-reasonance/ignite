@@ -37,6 +37,33 @@
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        
+        <!-- Durable memory configuration. -->
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+            <property name="dataRegionConfigurations">
+                <list>
+                <!--
+                    Defining a data region that will consume up to 4096 MB of RAM and 
+                    will have eviction and persistence enabled.
+                -->
+                <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                    <!-- Custom region name. -->
+                    <property name="name" value="4GB_Region"/>
+
+                    <!-- 100 MB initial size. -->
+                    <property name="initialSize" value="#{100L * 1024 * 1024}"/>
+
+                    <!-- 4GB maximum size. -->
+                    <property name="maxSize" value="#{4096L * 1024 * 1024}"/>
+                </bean>
+                </list>
+            </property>
+            </bean>
+        </property>
+
+
+
         <property name="cacheConfiguration">
             <list>
                 <!-- Partitioned cache example configuration (Atomic mode). -->
@@ -44,6 +71,7 @@
                     <property name="name" value="default"/>
                     <property name="atomicityMode" value="ATOMIC"/>
                     <property name="backups" value="1"/>
+                    <property name="dataRegionName" value="4GB_Region"/>
                 </bean>
             </list>
         </property>
@@ -77,7 +105,7 @@
                     <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
                         <property name="name" value="Default_Region"/>
                         <!-- Setting the size of the default region to 4GB. -->
-                        <property name="maxSize" value="#{4L * 1024 * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{5L * 1024 * 1024 * 1024}"/>
                     </bean>
                 </property>
             </bean>
